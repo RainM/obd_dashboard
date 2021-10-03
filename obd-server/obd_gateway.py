@@ -1,6 +1,8 @@
 import obd
 import json
 
+import sys
+
 class ObdCommand:
     def __init__(self, cmd_, serializer_):
         self.cmd = cmd_
@@ -10,11 +12,12 @@ class ObdCommand:
     def get_serializer(self):
         return self.serializer
 
-def template_serializer(key, arg):
-    result_obj = {"event_type": key, "value": arg.magnitude}
-    return [json.dumps(result_obj)]
-    
-ENGINE_RPM = ObdCommand(obd.commands.RPM, lambda x: template_serializer("engine_rpm", x))
+def magnitude_serializer(arg):
+    return [arg.magnitude]
+
+ENGINE_RPM = ObdCommand(obd.commands.RPM, magnitude_serializer)
+ENGINE_LOAD = ObdCommand(obd.commands.ENGINE_LOAD, magnitude_serializer)
+SPEED = ObdCommand(obd.commands.SPEED, magnitude_serializer)
 
 class ObdGateway:
     def __init__(self, serial):
@@ -24,7 +27,7 @@ class ObdGateway:
         def dummy_callback(value, cb):
             msgs = cmd.get_serializer()(value.value)
             for msg in  msgs:
-                cb(msg)
+                cb(cmd, "value", msg)
 
         self.connection.watch(cmd.get_cmd(), callback=lambda x: dummy_callback(x, callback_))
 

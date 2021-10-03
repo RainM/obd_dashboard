@@ -1,2 +1,4 @@
 obd
-websockets
+textual
+rich
+pyfiglet
