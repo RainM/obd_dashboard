@@ -10,11 +10,24 @@ fixtures.PLATES = [
 	canvas_text: 'data-type="radial-gauge"',
 	ws_selector: 'at_temp',
 	plate_ctor: function(elem) {
-	    return new RadialGauge(
-		{
-		    renderTo: elem
-		}
-	    ).draw();
+	    var options = {
+		series: [70],
+		chart: {
+		    height: 350,
+		    type: 'radialBar',
+		},
+		plotOptions: {
+		    radialBar: {
+			hollow: {
+			    size: '70%',
+			}
+		    },
+		},
+		labels: ['Cricket'],
+            };
+	    
+            var chart = new ApexCharts(elem, options);
+            chart.render();
 	},
 	on_update: function(new_value, plate) {
 	    
@@ -26,28 +39,34 @@ fixtures.PLATES = [
 	x: 1,
 	y: 0,
 	title: 'RPM',
-	canvas_text: 'data-type="radial-gauge"',
+	canvas_text: '',
 	ws_selector: 'engine_rpm',
 	plate_ctor: function(elem) {
-	    return new RadialGauge(
-		{
-		    renderTo: elem,
-		    maxValue: 6000,
-		    animationRule: 'bounce',
-		    animationDuration: 200
+	    data_obj = {data: [12]};	    
+	    var config = {
+		type: "radialGauge",
+		data: {
+		    datasets: [
+			data_obj
+		    ]
+		},
+		options: {
+		    domain: [0, 6000],
 		}
-	    ).draw();
+	    };
+	    g =  new Chart(elem.getContext('2d'), config);
+	    return [g, data_obj];
 	},
 	on_update: function(new_value, plate) {
-	    plate.value = new_value;
-	    //plate.update();
+	    plate[1].data = [new_value];
+	    plate[0].update()
 	}
     },
     {
-	w:1,
-	h: 2,
-	x: 0,
-	y: 1,
+	w: 2,
+	h: 1,
+	x: 2,
+	y: 0,
 	title: 'speed, kph',
 	canvas_text: '',
 	ws_selector: 'speed',
