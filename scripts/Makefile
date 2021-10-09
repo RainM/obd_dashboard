@@ -8,6 +8,7 @@ start:
 	gnome-terminal --full-screen -- /usr/bin/python ../obd-server/tui2.py --rs232_port $(RS232_PORT)
 
 install:
+	pip install -r ../requirements.txt
 	-mkdir -p ~/.config/autostart/
 	echo "[Desktop Entry]" > ~/.config/autostart/obdb.desktop
 	echo "Type=Application" >> ~/.config/autostart/obdb.desktop
